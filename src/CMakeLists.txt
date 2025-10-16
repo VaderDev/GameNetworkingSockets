@@ -167,6 +167,7 @@ protobuf_generate_cpp(GNS_CLIENTLIB_PROTO_SRCS GNS_CLIENTLIB_PROTO_HDRS ${GNS_CL
 function(gns_set_target_protobuf_properties TGT )
 	target_link_libraries(${TGT} PUBLIC
 		protobuf::libprotobuf
+		${abseil_LIBRARIES}
 		Threads::Threads
 		)
 endfunction()
