@@ -8,3 +8,6 @@
 [submodule "src/external/picojson"]
 	path = src/external/picojson
 	url = https://github.com/kazuho/picojson.git
+[submodule "protobuf"]
+	path = protobuf
+	url = https://github.com/protocolbuffers/protobuf.git

@@ -57,6 +57,52 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	print_default_msvc_flags()
 endif()
 
+# =================================================================================================
+# Hard coded workaround to pull in protobuf
+
+set(protobuf_INSTALL ON)
+set(protobuf_BUILD_TESTS OFF)
+set(protobuf_BUILD_EXAMPLES OFF)
+set(protobuf_BUILD_SHARED_LIBS OFF)
+set(protobuf_BUILD_STATIC_LIBS ON)
+set(protobuf_BUILD_PROTOBUF_BINARIES ON)
+set(protobuf_BUILD_PROTOC_BINARIES ON)
+set(BUILD_SHARED_LIB OFF)
+set(BUILD_STATIC_LIB ON)
+add_subdirectory(protobuf)
+
+# Replacement for protobuf_generate_cpp to resolve cyclic dependency in cmake
+function(generate_proto_custom OUT_SRCS OUT_HDRS)
+	set(GENERATED_SRCS)
+	set(GENERATED_HDRS)
+
+	foreach (PROTO IN LISTS ARGN)
+		get_filename_component(PROTO_FILE_BASENAME ${PROTO} NAME_WE)
+		get_filename_component(PROTO_FILE_DIRECTORY ${PROTO} DIRECTORY)
+		set(SRC "${CMAKE_CURRENT_BINARY_DIR}/${PROTO_FILE_BASENAME}.pb.cc")
+		set(HDR "${CMAKE_CURRENT_BINARY_DIR}/${PROTO_FILE_BASENAME}.pb.h")
+		list(APPEND GENERATED_SRCS ${SRC})
+		list(APPEND GENERATED_HDRS ${HDR})
+
+		add_custom_command(
+				OUTPUT ${SRC} ${HDR}
+				COMMAND protobuf::protoc
+				ARGS
+					--cpp_out=${CMAKE_CURRENT_BINARY_DIR}
+					-I ${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_FILE_DIRECTORY}
+					${PROTO_FILE_BASENAME}.proto
+				DEPENDS ${PROTO} protobuf::protoc
+				COMMENT "Generating C++ protobuf for ${PROTO}"
+				VERBATIM
+		)
+	endforeach ()
+
+	set(${OUT_SRCS} ${GENERATED_SRCS} PARENT_SCOPE)
+	set(${OUT_HDRS} ${GENERATED_HDRS} PARENT_SCOPE)
+endfunction()
+
+# =================================================================================================
+
 #
 # Primary crypto library (for AES, SHA256, etc)
 #
