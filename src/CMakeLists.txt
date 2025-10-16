@@ -4,8 +4,10 @@ include(CheckSymbolExists)
 include(CMakePushCheckState)
 include(GNUInstallDirs)
 
-find_package(Protobuf REQUIRED)
+
 find_package(Threads REQUIRED)
+
+set(CMAKE_CXX_STANDARD 26)
 
 set(GNS_COMMON_PROTOS
 	"common/steamnetworkingsockets_messages_certs.proto"
@@ -161,8 +163,8 @@ if(NOT SANITIZE_UNDEFINED)
 		)
 endif()
 
-protobuf_generate_cpp(GNS_COMMON_PROTO_SRCS GNS_COMMON_PROTO_HDRS ${GNS_COMMON_PROTOS})
-protobuf_generate_cpp(GNS_CLIENTLIB_PROTO_SRCS GNS_CLIENTLIB_PROTO_HDRS ${GNS_CLIENTLIB_PROTOS})
+generate_proto_custom(GNS_COMMON_PROTO_SRCS GNS_COMMON_PROTO_HDRS ${GNS_COMMON_PROTOS})
+generate_proto_custom(GNS_CLIENTLIB_PROTO_SRCS GNS_CLIENTLIB_PROTO_HDRS ${GNS_CLIENTLIB_PROTOS})
 
 function(gns_set_target_protobuf_properties TGT )
 	target_link_libraries(${TGT} PUBLIC
@@ -402,7 +404,7 @@ configure_package_config_file(../cmake/GameNetworkingSocketsConfig.cmake.in
 	PATH_VARS CMAKE_INSTALL_FULL_INCLUDEDIR
 	)
 
-install(FILES 
+install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/GameNetworkingSocketsConfig.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/GameNetworkingSockets
 	)

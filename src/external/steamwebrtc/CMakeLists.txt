@@ -64,18 +64,28 @@ if(IS_BIG_ENDIAN)
 endif()
 
 if(WIN32)
-	add_definitions(
-		-DWEBRTC_WIN
-		-DNOMINMAX
-		-DWIN32_LEAN_AND_MEAN
-		-D_WINSOCKAPI_
-		)
+	if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+		add_definitions(
+			-DWEBRTC_WIN
+			-DNOMINMAX
+			-DWIN32_LEAN_AND_MEAN
+			-D_WINSOCKAPI_
+			)
 		add_compile_options(
 			/wd4715   # src\external\webrtc\pc\dtls_transport.cc(34) : warning C4715: 'webrtc::`anonymous namespace'::TranslateState': not all control paths return a value
 			/wd4005   # C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um\winsock2.h(17): warning C4005: '_WINSOCKAPI_': macro redefinition
 			/wd4996   # src\external\webrtc\rtc_base\win32.cc(324): warning C4996: 'GetVersionExA': was declared deprecated
 			/wd4530   # C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.25.28610\include\ostream(281): warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
 		)
+	else()
+		add_definitions(
+			-DWEBRTC_WIN
+#			-DWEBRTC_POSIX
+#			-DWEBRTC_LINUX
+			-DNOMINMAX
+			-DWIN32_LEAN_AND_MEAN
+			)
+	endif()
 elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}  -Wl,--no-undefined ")
 	add_definitions(
@@ -778,7 +788,7 @@ target_link_libraries(webrtc-lite
 set_target_common_gns_properties(webrtc-lite)
 
 set_target_properties(webrtc-lite PROPERTIES
-	CXX_STANDARD 14
+	CXX_STANDARD 17
 	)
 
 set_property(TARGET webrtc-lite PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -801,7 +811,7 @@ target_link_libraries(steamwebrtc
 	)
 
 set_target_properties(steamwebrtc PROPERTIES
-	CXX_STANDARD 14
+	CXX_STANDARD 17
 	)
 
 set_property(TARGET steamwebrtc PROPERTY POSITION_INDEPENDENT_CODE ON)
