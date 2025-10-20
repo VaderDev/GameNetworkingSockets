@@ -7,27 +7,6 @@ find_package(OpenSSL REQUIRED)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# We need to pin to an old version of abseil
-#find_package(absl QUIET)
-set(absl_FOUND OFF)
-
-if(NOT absl_FOUND)
-	set(STEAMWEBRTC_ABSL_SOURCE submodule PARENT_SCOPE)
-	set(STEAMWEBRTC_ABSL_SOURCE submodule)
-
-	set(abseil_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../abseil)
-	check_submodule( ${abseil_SOURCE_DIR} ${abseil_SOURCE_DIR}/CMakeLists.txt )
-	message( STATUS "Using abseil in submodule, abseil_SOURCE_DIR = ${abseil_SOURCE_DIR}" )
-
-	add_subdirectory(${abseil_SOURCE_DIR} ${CMAKE_BINARY_DIR}/abseil EXCLUDE_FROM_ALL)
-	if(LTO)
-		set_property(DIRECTORY ${abseil_SOURCE_DIR} PROPERTY INTERPROCEDURAL_OPTIMIZATION ON)
-	endif()
-else()
-	set(STEAMWEBRTC_ABSL_SOURCE package PARENT_SCOPE)
-	set(STEAMWEBRTC_ABSL_SOURCE package)
-	message( STATUS "abseil package found, abseil_SOURCE_DIR = ${abseil_SOURCE_DIR}" )
-endif()
 
 set(webrtc_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../webrtc)
 check_submodule( ${webrtc_SOURCE_DIR} ${webrtc_SOURCE_DIR}/rtc_base )

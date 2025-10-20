@@ -59,16 +59,19 @@ endif()
 
 # =================================================================================================
 # Hard coded workaround to pull in protobuf
+# =================================================================================================
+
+set(ABSL_ENABLE_INSTALL ON)
+add_subdirectory(src/external/abseil)
+
+# =================================================================================================
 
 set(protobuf_INSTALL ON)
 set(protobuf_BUILD_TESTS OFF)
 set(protobuf_BUILD_EXAMPLES OFF)
 set(protobuf_BUILD_SHARED_LIBS OFF)
-set(protobuf_BUILD_STATIC_LIBS ON)
 set(protobuf_BUILD_PROTOBUF_BINARIES ON)
 set(protobuf_BUILD_PROTOC_BINARIES ON)
-set(BUILD_SHARED_LIB OFF)
-set(BUILD_STATIC_LIB ON)
 add_subdirectory(protobuf)
 
 # Replacement for protobuf_generate_cpp to resolve cyclic dependency in cmake
@@ -222,7 +225,7 @@ function(set_target_common_gns_properties TGT)
 				/wd4146   # include/google/protobuf/wire_format_lite.h(863): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 				/wd4530   # .../xlocale(319): warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
 				/wd4244   # google/protobuf/wire_format_lite.h(935): warning C4244: 'argument': conversion from 'google::protobuf::uint64' to 'google::protobuf::uint32', possible loss of data
-				/wd4251   # 'google::protobuf::io::CodedOutputStream::default_serialization_deterministic_': struct 'std::atomic<bool>' needs to have dll-interface to be used by clients of class 
+				/wd4251   # 'google::protobuf::io::CodedOutputStream::default_serialization_deterministic_': struct 'std::atomic<bool>' needs to have dll-interface to be used by clients of class
 				/wd4267   # google/protobuf/has_bits.h(73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 				)
 
